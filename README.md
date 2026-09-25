@@ -24,14 +24,11 @@ Este projeto foi desenhado para resolver pequenos gargalos operacionais no dia a
 recibos_notas/
 ├── gerador_recibo.py    # Script principal do gerador
 ├── main.py              # Ponto de entrada do projeto
-├── executar.bat         # Atalho para rodar com 2 cliques no Windows
 ├── README.md            # Documentação do projeto
 └── recibos/             # Diretório onde os recibos gerados em .txt são salvos
 ```
 
 ## ⚙️ Como executar o projeto
-
-### Opção 1: Pelo Terminal (PowerShell / Prompt de Comando)
 
 Execute o comando no terminal dentro da pasta do projeto:
 
@@ -44,10 +41,6 @@ ou
 ```bash
 python gerador_recibo.py
 ```
-
-### Opção 2: Com 2 cliques no Windows
-
-Basta clicar duas vezes sobre o arquivo `executar.bat`. Ele detectará o Python instalado e abrirá a tela interativa.
 
 ---
 
