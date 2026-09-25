@@ -2,7 +2,6 @@ import os
 import sys
 from datetime import datetime
 
-# Garante suporte a UTF-8 no terminal Windows
 if sys.platform.startswith("win"):
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -12,11 +11,9 @@ if sys.platform.startswith("win"):
         pass
 
 def formatar_moeda(valor: float) -> str:
-    """Formata um float para o padrão de moeda brasileiro (R$ 1.234,56)."""
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 def converter_para_float(valor_str: str) -> float:
-    """Converte strings com vírgula ou ponto em float."""
     limpo = valor_str.replace("R$", "").replace("r$", "").strip()
     if "." in limpo and "," in limpo:
         limpo = limpo.replace(".", "").replace(",", ".")
@@ -25,13 +22,11 @@ def converter_para_float(valor_str: str) -> float:
     return float(limpo)
 
 def limpar_nome_arquivo(texto: str) -> str:
-    """Remove caracteres inválidos para nomes de arquivos no Windows."""
     caracteres_invalidos = '<>:"/\\|?* '
     limpo = "".join(c if c not in caracteres_invalidos else "_" for c in texto)
     return limpo.strip("_") or "cliente"
 
 def obter_input_float(mensagem: str) -> float:
-    """Solicita um número float ao usuário com validação de erro."""
     while True:
         entrada = input(mensagem).strip()
         try:
@@ -44,7 +39,6 @@ def obter_input_float(mensagem: str) -> float:
             print(">> [AVISO] Valor inválido! Digite um número válido (ex: 29.90 ou 29,90).")
 
 def obter_input_qtd(mensagem: str) -> float:
-    """Solicita quantidade ao usuário com valor padrão 1."""
     while True:
         entrada = input(mensagem).strip()
         if not entrada:
@@ -63,7 +57,6 @@ def gerar_recibo():
     print("           GERADOR DE RECIBOS AUTOMATIZADO          ")
     print("=" * 52)
 
-    # Dados do Cliente
     cliente = input("\nNome do Cliente: ").strip()
     if not cliente:
         cliente = "Consumidor Final"
@@ -73,7 +66,6 @@ def gerar_recibo():
     if not forma_pagamento:
         forma_pagamento = "Nao informada"
 
-    # Inserção dinâmica de múltiplos produtos
     itens = []
     print("\n--- Inserção de Itens / Produtos ---")
     print("(Dica: Pressione ENTER com o nome vazio para finalizar)")
@@ -106,13 +98,11 @@ def gerar_recibo():
 
     observacao = input("\nObservações adicionais (opcional): ").strip()
 
-    # Cálculos e Timestamps
     agora = datetime.now()
     data_formatada = agora.strftime("%d/%m/%Y às %H:%M:%S")
     id_recibo = agora.strftime("%Y%m%d-%H%M%S")
     valor_total = sum(item["subtotal"] for item in itens)
 
-    # Montagem do Recibo em Formato Texto
     linhas = []
     linhas.append("=" * 50)
     linhas.append("         COMPROVANTE / RECIBO DE PEDIDO         ")
@@ -157,7 +147,6 @@ def gerar_recibo():
 
     conteudo_recibo = "\n".join(linhas)
 
-    # Pasta recibos
     pasta_destino = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recibos")
     os.makedirs(pasta_destino, exist_ok=True)
 
@@ -167,7 +156,6 @@ def gerar_recibo():
     with open(caminho_arquivo, "w", encoding="utf-8") as f:
         f.write(conteudo_recibo)
 
-    # Exibição do Recibo Gerado na tela
     print("\n" + "=" * 50)
     print("             RECIBO GERADO COM SUCESSO!           ")
     print("=" * 50 + "\n")
