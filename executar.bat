@@ -1,29 +1,30 @@
 @echo off
-chcp 65001 > nul
-title Gerador de Recibos Automatizado 🧾
+setlocal
+chcp 65001 >nul
 
-REM Tenta executar usando python no PATH
-where python >nul 2>nul
-if %ERRORLEVEL% EQU 0 (
-    python main.py
-    pause
-    exit /b
-)
-
-REM Tenta executar via caminho padrão do Python 3.11 instalado
+REM Verifica o Python oficial instalado no LocalAppData
 if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
-    "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" main.py
-    pause
-    exit /b
+    "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" "%~dp0main.py"
+    goto fim
 )
 
-REM Tenta executar via caminho padrão do Python 3.13 instalado
 if exist "%LOCALAPPDATA%\Programs\Python\Python313\python.exe" (
-    "%LOCALAPPDATA%\Programs\Python\Python313\python.exe" main.py
-    pause
-    exit /b
+    "%LOCALAPPDATA%\Programs\Python\Python313\python.exe" "%~dp0main.py"
+    goto fim
 )
 
-echo [ERRO] Python não foi encontrado no sistema.
-echo Verifique se o Python 3 está instalado corretamente.
+REM Tenta o inicializador padrao py
+py -3 "%~dp0main.py" 2>nul
+if %ERRORLEVEL% EQU 0 goto fim
+
+REM Tenta comando python direto
+python "%~dp0main.py" 2>nul
+if %ERRORLEVEL% EQU 0 goto fim
+
+echo.
+echo [ERRO] Python 3 nao foi encontrado no seu computador.
+echo Verifique se o Python esta instalado.
+echo.
+
+:fim
 pause

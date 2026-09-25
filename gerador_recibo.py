@@ -2,7 +2,7 @@ import os
 import sys
 from datetime import datetime
 
-# Garante suporte a UTF-8 no terminal Windows para evitar erros de codificação (cp1252)
+# Garante suporte a UTF-8 no terminal Windows
 if sys.platform.startswith("win"):
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -18,7 +18,6 @@ def formatar_moeda(valor: float) -> str:
 def converter_para_float(valor_str: str) -> float:
     """Converte strings com vírgula ou ponto em float."""
     limpo = valor_str.replace("R$", "").replace("r$", "").strip()
-    # Se tiver separador de milhar e decimal
     if "." in limpo and "," in limpo:
         limpo = limpo.replace(".", "").replace(",", ".")
     elif "," in limpo:
@@ -38,11 +37,11 @@ def obter_input_float(mensagem: str) -> float:
         try:
             val = converter_para_float(entrada)
             if val < 0:
-                print("⚠️ O valor não pode ser negativo. Tente novamente.")
+                print(">> [AVISO] O valor não pode ser negativo. Tente novamente.")
                 continue
             return val
         except ValueError:
-            print("⚠️ Valor inválido! Digite um número válido (ex: 29.90 ou 29,90).")
+            print(">> [AVISO] Valor inválido! Digite um número válido (ex: 29.90 ou 29,90).")
 
 def obter_input_qtd(mensagem: str) -> float:
     """Solicita quantidade ao usuário com valor padrão 1."""
@@ -53,31 +52,31 @@ def obter_input_qtd(mensagem: str) -> float:
         try:
             qtd = converter_para_float(entrada)
             if qtd <= 0:
-                print("⚠️ A quantidade deve ser maior que zero.")
+                print(">> [AVISO] A quantidade deve ser maior que zero.")
                 continue
             return qtd
         except ValueError:
-            print("⚠️ Quantidade inválida! Digite um número (ex: 1, 2, 0.5).")
+            print(">> [AVISO] Quantidade inválida! Digite um número (ex: 1, 2, 0.5).")
 
 def gerar_recibo():
-    print("\n" + "=" * 50)
-    print("       GERADOR DE RECIBOS AUTOMATIZADO 🧾       ")
-    print("=" * 50)
+    print("\n" + "=" * 52)
+    print("           GERADOR DE RECIBOS AUTOMATIZADO          ")
+    print("=" * 52)
 
     # Dados do Cliente
-    cliente = input("\n👤 Nome do Cliente: ").strip()
+    cliente = input("\nNome do Cliente: ").strip()
     if not cliente:
         cliente = "Consumidor Final"
 
-    contato = input("📱 Telefone / Contato (opcional): ").strip()
-    forma_pagamento = input("💳 Forma de Pagamento (ex: Pix, Dinheiro, Cartão): ").strip()
+    contato = input("Telefone / Contato (opcional): ").strip()
+    forma_pagamento = input("Forma de Pagamento (ex: Pix, Dinheiro, Cartao): ").strip()
     if not forma_pagamento:
-        forma_pagamento = "Não informada"
+        forma_pagamento = "Nao informada"
 
     # Inserção dinâmica de múltiplos produtos
     itens = []
-    print("\n📦 --- Inserção de Itens/Produtos ---")
-    print("(Pressione ENTER com o nome vazio para finalizar a adição de itens)")
+    print("\n--- Inserção de Itens / Produtos ---")
+    print("(Dica: Pressione ENTER com o nome vazio para finalizar)")
 
     contador = 1
     while True:
@@ -85,7 +84,7 @@ def gerar_recibo():
         nome_produto = input("  Nome do produto/serviço: ").strip()
         if not nome_produto:
             if not itens:
-                print("⚠️ Adicione pelo menos um item ao recibo!")
+                print(">> [AVISO] Adicione pelo menos um item ao recibo!")
                 continue
             break
 
@@ -101,11 +100,11 @@ def gerar_recibo():
         })
         contador += 1
 
-        opcao = input("\n➕ Deseja adicionar mais um item? (S/N) [S]: ").strip().lower()
+        opcao = input("\nAdicionar mais um item? (S/N) [S]: ").strip().lower()
         if opcao in ["n", "nao", "não"]:
             break
 
-    observacao = input("\n📝 Observações adicionais (opcional): ").strip()
+    observacao = input("\nObservações adicionais (opcional): ").strip()
 
     # Cálculos e Timestamps
     agora = datetime.now()
@@ -133,7 +132,6 @@ def gerar_recibo():
         nome = item["nome"]
         total_item_str = formatar_moeda(item["subtotal"])
         
-        # Truncar ou formatar caso o nome seja muito longo
         if len(nome) > 28:
             nome_linha = nome[:25] + "..."
         else:
@@ -141,7 +139,6 @@ def gerar_recibo():
 
         linhas.append(f"{qtd_str:<5} {nome_linha:<28} {total_item_str:>15}")
         
-        # Se quantidade for maior que 1, mostrar detalhe unitário
         if item["quantidade"] != 1:
             detalhe = f"     ({qtd_str} de {formatar_moeda(item['valor_unitario'])})"
             linhas.append(detalhe)
@@ -160,7 +157,7 @@ def gerar_recibo():
 
     conteudo_recibo = "\n".join(linhas)
 
-    # Criar pasta 'recibos' caso não exista
+    # Pasta recibos
     pasta_destino = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recibos")
     os.makedirs(pasta_destino, exist_ok=True)
 
@@ -171,22 +168,25 @@ def gerar_recibo():
         f.write(conteudo_recibo)
 
     # Exibição do Recibo Gerado na tela
-    print("\n" + "✨" * 25)
-    print("✅ RECIBO GERADO COM SUCESSO!")
-    print("✨" * 25 + "\n")
+    print("\n" + "=" * 50)
+    print("             RECIBO GERADO COM SUCESSO!           ")
+    print("=" * 50 + "\n")
     print(conteudo_recibo)
     print("\n" + "-" * 50)
-    print(f"📁 Arquivo salvo em:\n{caminho_arquivo}")
+    print(f"[ARQUIVO SALVO]:\n{caminho_arquivo}")
     print("-" * 50)
 
 def main():
-    while True:
-        gerar_recibo()
-        print("\n" + "=" * 50)
-        continuar = input("Deseja gerar outro recibo? (S/N) [N]: ").strip().lower()
-        if continuar not in ["s", "sim"]:
-            print("\n👋 Encerrando o gerador de recibos. Até a próxima!")
-            break
+    try:
+        while True:
+            gerar_recibo()
+            print("\n" + "=" * 52)
+            continuar = input("Deseja gerar outro recibo? (S/N) [N]: ").strip().lower()
+            if continuar not in ["s", "sim"]:
+                print("\nEncerrando o gerador de recibos. Até a próxima!\n")
+                break
+    except KeyboardInterrupt:
+        print("\n\nOperação cancelada pelo usuário. Até logo!\n")
 
 if __name__ == "__main__":
     main()
