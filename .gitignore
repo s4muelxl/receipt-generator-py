@@ -4,3 +4,7 @@ __pycache__/
 *.env
 .vscode/
 .idea/
+
+# Recibos gerados (ignorar comprovantes com dados, preservando a pasta)
+recibos/*.txt
+!recibos/.gitkeep
